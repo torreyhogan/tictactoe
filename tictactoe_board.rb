@@ -1,3 +1,5 @@
+# This is the board for tic tac toe
+
 class Board
 
 	def initialize
@@ -37,28 +39,9 @@ class Board
 	end
 
 	def space(row, column)
-		case row
-		when "top"
-			first = 0
-		when "middle"
-			first = 1
-		when "bottom"
-			first = 2
-		else
-			first = 3
-		end
-
-		case column
-		when "left"
-			second = 0
-		when "middle"
-			second = 1
-		when "right"
-			second = 2
-		else
-			second = 3
-		end
-			move_idx = [first, second]
+		translate = {"top" => 0, "middle" => 1, "bottom:" => 2, "left" => 0, "middle" => 1, "right" => 2}
+		translate.default = 3
+		move_idx = [translate[row], translate[column]]
 		return move_idx
 	end
 
@@ -68,7 +51,7 @@ class Board
 	  	puts "Please type: top middle bottom, with: left middle right"
 	  	return false
 	  elsif @board[row][column] != "-"
-			puts "You cannot overwrite another move. Try Again you fucking idiot."
+			puts "You cannot overwrite another move. Try Again."
 			return false
 	  else
 	  	return true
@@ -105,10 +88,7 @@ class Board
 
 
 	def board_not_full
-		logic = @board.any? do |x|
-			x.include?("-")
-
-		end
+		@board.any? {|x| x.include?("-") }
 	end
 
 	def stale_mate
