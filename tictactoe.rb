@@ -27,8 +27,8 @@ class Game
 
 	def start_game
 		puts "Welcome to Tic Tac Toe"
-		puts "Play by typing the column position and row position separated by a coma"
-		puts "Ex:  top, middle"
+		puts "Play by typing the column position and row position separated by a space"
+		puts "Ex:  top middle"
 		puts "\"#{@player_turn}\" goes first."
 
 	end
@@ -37,7 +37,8 @@ end
 class Board
 
 	def initialize
-		@board = [["-","-","-"],["-","-","-"],["-","-","-"]]
+		# @board = [["-","-","-"],["-","-","-"],["-","-","-"]]
+		@board = [["X","O","X"],["O","X","X"],["O","X","-"]]
 	end
 
 	def display
@@ -52,23 +53,24 @@ class Board
 	end
 
 	def make_move(who_player)
-		
+    board_idx = condition_input
+    while !(valid_move?(board_idx[0], board_idx[-1]))
+			# if valid_move?(board_idx[0], board_idx[1])
+			# 	@board[board_idx[0]][board_idx[1]] = who_player
+			# else
+			board_idx = condition_input
+			valid_move?(board_idx[0], board_idx[-1])
+		end
+		@board[board_idx[0]][board_idx[-1]] = who_player
+	end
+
+	def condition_input
 		move = gets.chomp
-		move_a = conditioned_input(move)
 		move_a = move.split(' ')
 		row_word = move_a[0]
 		column_word = move_a[1]
-		board_idx = space(row_word, column_word)
-
-		if valid_move?(board_idx[0], board_idx[1])
-			first_idx = space(row_word, column_word)
-			@board[board_idx[0]][board_idx[1]] = who_player
-		end
-		display #-------------------
+		return space(row_word, column_word)
 	end
-
-
-
 
 	def space(row, column)
 		case row
@@ -78,6 +80,8 @@ class Board
 			first = 1
 		when "bottom"
 			first = 2
+		else
+			first = 3
 		end
 
 		case column
@@ -87,13 +91,24 @@ class Board
 			second = 1
 		when "right"
 			second = 2
+		else
+			second = 3
 		end
 			move_idx = [first, second]
 		return move_idx
 	end
 
 	def valid_move?(row, column)
-		@board[row][column] == "-"
+
+	  if row == 3 || column == 3
+	  	puts "Please type: top middle bottom, with: left middle right"
+	  	return false
+	  elsif @board[row][column] != "-"
+			puts "You cannot overwrite another move. Try Again you fucking idiot."
+			return false
+	  else
+	  	return true
+	  end
 	end
 
 	def winner
@@ -101,7 +116,7 @@ class Board
 		winner_logic = false
 		while i < @board.length
 			if (@board[i][0] == @board[i][1]) && (@board[i][1] == @board[i][2]) && (@board[i][0] != "-")
-				puts "#{@board[i][0]} is the winner!!!"
+				# puts "#{@board[i][0]} is the winner!!!"
 				winner_logic = true
 			end
 			i += 1
@@ -109,19 +124,19 @@ class Board
 		j = 0
 		while j < @board.length
 			if @board[0][j] == @board[1][j] && @board[1][j] == @board[2][j] && @board[0][j] != "-"
-				puts "#{@board[0][j]} is the winner!!!"
+				# puts "#{@board[0][j]} is the winner!!!"
 				winner_logic = true
 			end
 			j += 1
 		end
 		if @board[0][0] == @board[1][1] && @board[1][1] == @board[2][2] && @board[0][0] != "-"
-			puts "#{@board[0][0]} is the winner!!!"
+			# puts "#{@board[0][0]} is the winner!!!"
 			winner_logic = true
 		elsif @board[2][0] == @board[1][1] && @board[1][1] == @board[0][2] && @board[2][0] != "-"
-			puts "#{@board[2][0]} is the winner!!!"
+			# puts "#{@board[2][0]} is the winner!!!"
 			winner_logic = true
 		end
-		return puts winner_logic
+		return winner_logic
 	end
 
 
@@ -136,11 +151,9 @@ class Board
 		puts "No moves left"
 		puts "D R A W"
 	end
-
 end
 
 new_board = Board.new 
-new_board.display
 
 new_game = Game.new()
 new_game.start_game
@@ -152,11 +165,13 @@ while !new_board.winner && new_board.board_not_full
 	new_game.switch_turn
 end
 
-if new_board.winner
-	new_board.winner
-elsif !new_board.board_not_full
-	new_board.stale_mate
-end
+new_board.display
+
+# if new_board.winner
+# 	new_board.winner
+# elsif !new_board.board_not_full
+# 	new_board.stale_mate
+# end
 
 # start game
 # set new board
